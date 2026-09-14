@@ -14,6 +14,9 @@
   <% if (theme.giscus && theme.giscus.enable) { %>
     <%- css('css/giscus') %>
   <% } %>
+  <% if (theme.catcounter && theme.catcounter.enable) { %>
+    <%- css('css/catcounter') %>
+  <% } %>
   <% if ((page.math !== undefined) ? page.math : (theme.math && theme.math.enable)) { %>
     <%- css('css/math') %>
   <% } %>

@@ -31,6 +31,7 @@
 - LXGW WenKai GB font (CDN with subset loading)
 - Light and dark themes: follows the system preference automatically, with a manual toggle
 - Comment systems: Waline and Giscus (GitHub Discussions), both optional and can coexist
+- Page views: optional integration with self-hosted CatCounter (Cloudflare Workers), off by default
 - Math (LaTeX) rendering via MathJax v4 (optional)
 
 ## Installation
@@ -197,6 +198,18 @@ waline:
   enable: false
   serverURL: 'https://your-server-url'
 
+# CatCounter page views (https://github.com/finch-xu/CatCounter, self-hosted on Cloudflare Workers)
+catcounter:
+  enable: false
+  endpoint: 'https://counter.example.com'   # Worker origin, no path
+  token: ''                                  # cc_xxx from the admin panel
+  show_site: true    # site-wide PV / UV in the footer
+  show_post: true    # "views N" in the post meta line
+  show_list: true    # "views N" on each card of the post list (one extra read-only request per page, no counting)
+  label_site_pv: 'Views'
+  label_site_uv: 'Visitors'
+  label_page_pv: 'Views'
+
 # Post excerpt link text
 excerpt_link: Read More
 
@@ -232,18 +245,30 @@ hexo-theme-warmpaper/
 │       ├── toc.ejs          # TOC sidebar
 │       ├── comment.ejs      # Waline comment template
 │       ├── giscus.ejs       # Giscus comment component
+│       ├── catcounter.ejs   # CatCounter page-view script
 │       └── math.ejs         # MathJax formula component
 └── source/
     ├── css/
     │   ├── style.css        # Main stylesheet
     │   ├── waline.css       # Waline comment styles
     │   ├── giscus.css       # Giscus comment styles
+    │   ├── catcounter.css   # CatCounter page-view styles
     │   └── math.css         # Math (formula) styles
     ├── images/
     │   └── logo.svg         # Default theme logo
     └── js/
         └── main.js          # TOC scroll tracking
 ```
+
+## Page views (CatCounter)
+
+The theme can show page views from [CatCounter](https://github.com/finch-xu/CatCounter), a self-hosted counter running on Cloudflare Workers (the free tier is enough).
+
+1. Deploy the Worker following the CatCounter README, create a site in the admin panel and copy its token.
+2. Add your blog origin (e.g. `https://blog.example.com`) to the site's **origin allowlist**; add `http://localhost:4000` too for local `hexo server` previews.
+3. Fill in `endpoint` and `token` under `catcounter` in the theme `_config.yml` and set `enable: true`.
+
+When enabled, the footer shows site-wide views / visitors, the post meta line shows the post's views, and each card on the post list shows its views. Each spot has its own switch (`show_site` / `show_post` / `show_list`) and the wording is set with `label_*`. The script loads with `async` and never blocks rendering; if the API is unreachable the numbers stay as "-".
 
 ## Math
 
