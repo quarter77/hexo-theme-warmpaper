@@ -5,9 +5,19 @@
   <%- open_graph() %>
   <link rel="icon" href="<%- url_for('/images/logo.svg') %>">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-gb-web@latest/lxgwwenkaigb-regular/result.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-gb-web@latest/lxgwwenkaigb-medium/result.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5.3.0/700.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@chinese-fonts/maple-mono-cn@2.0.0/dist/MapleMono-CN-Regular/result.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
 
+  <link rel="stylesheet" href="https://ai.zhheo.com/static/public/tianli_gpt.min.css">
+  <script>
+  let tianliGPT_postSelector = '#postchat_postcontent';
+  let tianliGPT_key = 'S-ATO0KVLITZYEXIH6';
+  let tianliGPT_theme = 'menghuan';
+  </script>
+  <script src="https://ai.zhheo.com/static/public/tianli_gpt.min.js"></script>
+
+  <%- css('css/callout_blocks') %>
   <% if (theme.waline && theme.waline.enable) { %>
     <%- css('css/waline') %>
   <% } %>
@@ -16,6 +26,7 @@
   <% } %>
   <% if ((page.math !== undefined) ? page.math : (theme.math && theme.math.enable)) { %>
     <%- css('css/math') %>
+    <%- partial('math') %>
   <% } %>
   <%- css('css/style') %>
   <%# Inline to avoid FOUC. Storage key kept in sync with source/js/main.js %>

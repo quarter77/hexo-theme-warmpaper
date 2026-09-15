@@ -8,23 +8,48 @@ menu:
   Categories: /categories
   About: /about
 
+profile:
+  avatar: https://staic.qu43ter.top/blog/avatar.png
+  description: "IT IS A LONG JOURNEY."
+  links:                         # 社交链接（可配置任意数量）
+    - name: GitHub
+      url: https://github.com/quarter77
+      icon: github               # 支持: github, email, website, twitter, rss, bilibili, zhihu
+    # - name: Email
+    #   url: mailto:your@email.com
+    #   icon: email
+    # - name: 
+    #   url: 
+    #   icon: website
+    # - name: Twitter
+    #   url: https://twitter.com/yourname
+    #   icon: twitter
+    # - name: RSS
+    #   url: /atom.xml
+    #   icon: rss
+
 # Table of Contents (right sidebar on post pages)
 toc:
   enable: true
-  max_depth: 3
-  min_depth: 2
+  max_depth: 4
+  min_depth: 1
   list_number: false
 
 # Math (LaTeX) rendering via MathJax v4.
 # Requires a Markdown renderer that passes through $...$ (see README).
 # Per-post override: set `math: true` / `math: false` in a post's front-matter.
 math:
-  enable: true
-
-# Waline comment
-waline:
   enable: false
-  serverURL: 'https://your-server-url'
+
+# Code block settings
+code:
+  line_number: false    # Show line numbers in code blocks
+  wrap: true          # Wrap long lines instead of horizontal scrolling
+
+# 评论系统
+waline:
+  enable: true
+  serverURL: 'https://waline.qu43ter.top'
 
 # Giscus comment (GitHub Discussions)
 # 到 https://giscus.app 生成 repo / category 的 ID 后填入
@@ -44,32 +69,12 @@ giscus:
   theme_light: 'light'
   theme_dark: 'dark'
 
-# Profile (shown on homepage above post list)
-profile:
-  avatar: /images/logo.svg
-  description: ""
-  links:
-    - name: GitHub
-      url: https://github.com/finch-xu/
-      icon: github
-    # - name: Email
-    #   url: mailto:your@email.com
-    #   icon: email
-    - name: pidan.dev
-      url: https://pidan.dev
-      icon: website
-    - name: 雨云VPS
-      url: https://www.rainyun.com/ODA1MzUy_?s=pidan.dev
-      icon: website
-    # - name: Twitter
-    #   url: https://twitter.com/yourname
-    #   icon: twitter
-    # - name: RSS
-    #   url: /atom.xml
-    #   icon: rss
-
 # Post excerpt
 excerpt_link: Read More
 
 # Footer
 copyright: ""
+
+# Background style
+background:
+  style: grid          # "grid" for paper texture grid, "plain" for solid color

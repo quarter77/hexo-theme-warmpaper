@@ -244,6 +244,141 @@
   run();
 })();
 
+// Search panel
+(function () {
+  var toggle = document.querySelector('.search-toggle');
+  var panel = document.querySelector('.search-panel');
+  var input = document.querySelector('#search-input');
+  var status = document.querySelector('#search-status');
+  var results = document.querySelector('#search-results');
+  if (!toggle || !panel || !input || !status || !results) return;
+
+  var recordsPromise = null;
+  var records = [];
+  var previousFocus = null;
+  var searchCore = window.WarmpaperSearchCore;
+
+  function stripMarkup(value) {
+    var holder = document.createElement('div');
+    holder.innerHTML = String(value || '');
+    return holder.textContent || '';
+  }
+
+  function normalize(value) {
+    return String(value || '').toLowerCase().replace(/\s+/g, ' ').trim();
+  }
+
+  function makeExcerpt(text, terms) {
+    var clean = text.replace(/\s+/g, ' ').trim();
+    if (clean.length <= 180) return clean;
+    var position = -1;
+    for (var i = 0; i < terms.length; i++) {
+      var found = normalize(clean).indexOf(terms[i]);
+      if (found !== -1 && (position === -1 || found < position)) position = found;
+    }
+    var start = position > 60 ? position - 60 : 0;
+    return (start ? '... ' : '') + clean.slice(start, start + 180) + (start + 180 < clean.length ? ' ...' : '');
+  }
+
+  function appendHighlighted(parent, text, terms) {
+    var segments = searchCore.highlightText(text, terms);
+    segments.forEach(function (segment) {
+      if (segment.highlight) {
+        var mark = document.createElement('mark');
+        mark.textContent = segment.text;
+        parent.appendChild(mark);
+      } else {
+        parent.appendChild(document.createTextNode(segment.text));
+      }
+    });
+  }
+
+  function setStatus(message, state) {
+    status.textContent = message;
+    status.className = 'search-status' + (state ? ' is-' + state : '');
+  }
+
+  function loadIndex() {
+    if (recordsPromise) return recordsPromise;
+    setStatus('正在加载搜索索引...', 'loading');
+    recordsPromise = fetch(panel.getAttribute('data-search-path'), { credentials: 'same-origin' })
+      .then(function (response) {
+        if (!response.ok) throw new Error('Search index request failed');
+        return response.json();
+      })
+      .then(function (data) {
+        records = Array.isArray(data) ? data : [];
+        return records;
+      });
+    recordsPromise.catch(function () {
+      recordsPromise = null;
+      setStatus('搜索索引加载失败，请稍后重试。', 'error');
+    });
+    return recordsPromise;
+  }
+
+  function search(query) {
+    var terms = normalize(query).split(' ').filter(Boolean);
+    results.textContent = '';
+    if (!terms.length) { setStatus('输入关键词开始搜索。'); return; }
+    if (!searchCore) { setStatus('搜索功能加载失败，请刷新页面重试。', 'error'); return; }
+    var prepared = records.map(function (record) {
+      return Object.assign({}, record, { content: stripMarkup(record.content) });
+    });
+    var matches = searchCore.searchRecords(prepared, query).slice(0, 20).map(function (record) {
+      return { record: record, title: record.title || '未命名文章', content: normalize(record.content) };
+    });
+    if (!matches.length) { setStatus('没有找到匹配的文章。', 'empty'); return; }
+    setStatus('找到 ' + matches.length + ' 篇文章。');
+    matches.forEach(function (item) {
+      var li = document.createElement('li');
+      li.className = 'search-result';
+      var link = document.createElement('a');
+      link.className = 'search-result-link';
+      link.href = item.record.url || item.record.path || '#';
+      var title = document.createElement('span');
+      title.className = 'search-result-title';
+      appendHighlighted(title, item.title, terms);
+      var meta = document.createElement('time');
+      meta.className = 'search-result-date';
+      if (item.record.date) {
+        var date = new Date(item.record.date);
+        meta.textContent = isNaN(date.getTime()) ? String(item.record.date) : date.toLocaleDateString('zh-CN');
+      }
+      var summary = document.createElement('span');
+      summary.className = 'search-result-excerpt';
+      appendHighlighted(summary, makeExcerpt(item.content, terms), terms);
+      link.appendChild(title);
+      if (meta.textContent) link.appendChild(meta);
+      link.appendChild(summary);
+      li.appendChild(link);
+      results.appendChild(li);
+    });
+  }
+
+  function openPanel() {
+    previousFocus = document.activeElement;
+    panel.hidden = false;
+    panel.classList.add('is-open');
+    toggle.setAttribute('aria-expanded', 'true');
+    loadIndex().then(function () { search(input.value); }).catch(function () {});
+    window.setTimeout(function () { input.focus(); }, 0);
+  }
+
+  function closePanel() {
+    panel.hidden = true;
+    panel.classList.remove('is-open');
+    toggle.setAttribute('aria-expanded', 'false');
+    if (previousFocus && previousFocus.focus) previousFocus.focus();
+  }
+
+  toggle.addEventListener('click', function () { if (panel.hidden) openPanel(); else closePanel(); });
+  panel.querySelector('.search-close').addEventListener('click', closePanel);
+  input.addEventListener('input', function () { search(input.value); });
+  document.addEventListener('keydown', function (event) { if (event.key === 'Escape' && !panel.hidden) closePanel(); });
+  panel.addEventListener('click', function (event) { if (event.target === panel) closePanel(); });
+})();
+
 // Theme toggle
 (function () {
   var STORAGE_KEY = 'warmpaper-theme';

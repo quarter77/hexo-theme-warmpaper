@@ -1,7 +1,10 @@
 <% if (theme.profile) { %>
 <div class="profile-card">
   <% if (theme.profile.avatar) { %>
-    <img class="profile-avatar" src="<%- url_for(theme.profile.avatar) %>" alt="<%= config.author || config.title %>">
+    <div class="profile-avatar-wrap">
+      <img class="profile-avatar" src="<%- url_for(theme.profile.avatar) %>" alt="<%= config.author || config.title %>">
+      <span class="green-dot" aria-hidden="true"></span>
+    </div>
   <% } %>
   <h2 class="profile-name"><%= config.title %></h2>
   <% if (theme.profile.description) { %>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="<%= config.language || 'en' %>">
 <%- partial('partial/head') %>
-<body>
+<body data-code-line-number="<%= theme.code && theme.code.line_number !== false ? 'true' : 'false' %>" data-code-wrap="<%= theme.code && theme.code.wrap === true ? 'true' : 'false' %>" data-background-style="<%= theme.background && theme.background.style || 'grid' %>">
   <div class="site-wrapper">
     <%- partial('partial/header') %>
     <main class="main-content">
@@ -9,6 +9,7 @@
     </main>
     <%- partial('partial/footer') %>
   </div>
+  <%- js('js/search-core') %>
   <%- js('js/main') %>
 </body>
 </html>
