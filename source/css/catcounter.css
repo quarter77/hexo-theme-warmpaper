@@ -1,0 +1,13 @@
+/* CatCounter 访问量：仅在 theme.catcounter.enable 时加载。
+   字号与颜色沿用 .post-meta / .post-card-meta / .site-footer，这里只补细节。 */
+
+/* 数字用等宽数字，回填后宽度不跳动 */
+.post-views [data-cc],
+.site-stats [data-cc] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 页脚统计行和版权行之间留一点距离 */
+.site-footer .site-stats {
+  margin-bottom: 0.5rem;
+}

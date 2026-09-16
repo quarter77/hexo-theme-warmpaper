@@ -1,4 +1,6 @@
-<article class="post-card">
+<%# 列表阅读量：给卡片加 data-cc-path 后，CatCounter 会把整页的路径合并成一次只读请求 %>
+<% var ccList = theme.catcounter && theme.catcounter.enable && theme.catcounter.show_list !== false; %>
+<article class="post-card"<% if (ccList) { %> data-cc-path="<%- url_for(post.path) %>"<% } %>>
   <h2 class="post-card-title">
     <a href="<%- url_for(post.path) %>"><%= post.title || '(Untitled)' %></a>
   </h2>
@@ -9,6 +11,10 @@
       <% post.categories.each(function(cat){ %>
         <a href="<%- url_for(cat.path) %>"><%= cat.name %></a>
       <% }) %>
+    <% } %>
+    <% if (ccList) { %>
+      <span class="separator">&middot;</span>
+      <span class="post-views"><%= theme.catcounter.label_page_pv || '阅读' %> <span data-cc="page_pv">-</span></span>
     <% } %>
   </div>
   <div class="post-card-excerpt">

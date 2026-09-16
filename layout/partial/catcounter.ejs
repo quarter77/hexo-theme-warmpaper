@@ -1,0 +1,8 @@
+<%# CatCounter 访问量统计 — 仅在 theme.catcounter.enable 为 true 时引入。
+    脚本由博主自建的 Cloudflare Worker 提供（https://github.com/finch-xu/CatCounter），
+    每次重新部署都会变，没有固定的 SRI 哈希可用，因此按来源（自己的 Worker 域名）信任。
+    async 加载：不阻塞 HTML 解析，脚本在 DOMContentLoaded 之后才发请求，
+    只回填 <span data-cc="..."> 的文本，接口失败时占位保持「-」。 %>
+<script async
+        src="<%= String(theme.catcounter.endpoint || '').replace(/\/+$/, '') %>/catcounter.js"
+        data-token="<%= theme.catcounter.token %>"></script>

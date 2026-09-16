@@ -31,6 +31,7 @@
 - 霞鹜文楷 GB 字体（CDN 分片加载）
 - 支持亮色、暗色主题，自适应切换，并支持手动切换
 - 评论系统集成：Waline、Giscus（基于 GitHub Discussions），均可选开启，支持并存
+- 访问量统计：可选接入自建的 CatCounter（Cloudflare Workers），默认关闭
 - 数学公式渲染（MathJax v4，可选开启）
 
 ## 安装
@@ -197,6 +198,18 @@ waline:
   enable: false
   serverURL: 'https://your-server-url'
 
+# CatCounter 访问量统计（https://github.com/finch-xu/CatCounter，自建 Cloudflare Worker）
+catcounter:
+  enable: false
+  endpoint: 'https://counter.example.com'   # Worker 域名，不带路径
+  token: ''                                  # 后台新建站点得到的 cc_xxx
+  show_site: true    # 页脚显示「总访问 / 访客」
+  show_post: true    # 文章页 meta 行显示「阅读 N」
+  show_list: true    # 首页列表每张卡片显示「阅读 N」（每页多一次只读请求，不计数）
+  label_site_pv: '总访问'
+  label_site_uv: '访客'
+  label_page_pv: '阅读'
+
 # 文章摘要链接文字
 excerpt_link: Read More
 
@@ -232,18 +245,30 @@ hexo-theme-warmpaper/
 │       ├── toc.ejs          # 目录侧边栏
 │       ├── comment.ejs      # Waline 评论模板
 │       ├── giscus.ejs       # Giscus 评论组件
+│       ├── catcounter.ejs   # CatCounter 访问量脚本
 │       └── math.ejs         # MathJax 公式组件
 └── source/
     ├── css/
     │   ├── style.css        # 主样式表
     │   ├── waline.css       # Waline 评论样式
     │   ├── giscus.css       # Giscus 评论样式
+    │   ├── catcounter.css   # CatCounter 访问量样式
     │   └── math.css         # 数学公式样式
     ├── images/
     │   └── logo.svg         # 主题默认 Logo
     └── js/
         └── main.js          # TOC 滚动追踪
 ```
+
+## 访问量统计（CatCounter）
+
+主题支持接入 [CatCounter](https://github.com/finch-xu/CatCounter)：部署在 Cloudflare Workers 上的自建访问量统计，免费套餐即可运行。
+
+1. 按 CatCounter 仓库说明部署 Worker，在后台新建站点，得到 token。
+2. 站点的 **Origin 白名单**加入博客域名（如 `https://blog.example.com`）；本地 `hexo server` 预览时再加上 `http://localhost:4000`。
+3. 在主题 `_config.yml` 的 `catcounter` 块里填 `endpoint` 和 `token`，把 `enable` 改为 `true`。
+
+开启后：页脚显示站点总访问 / 访客，文章页 meta 行显示阅读量，首页列表每张卡片显示阅读量。三处各有独立开关 `show_site` / `show_post` / `show_list`，文案通过 `label_*` 修改。脚本以 `async` 方式加载，不阻塞页面渲染；接口不可用时数字保持「-」。
 
 ## 数学公式
 

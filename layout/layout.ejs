@@ -9,7 +9,13 @@
     </main>
     <%- partial('partial/footer') %>
   </div>
+
   <%- js('js/search-core') %>
+
+  <% if (theme.catcounter && theme.catcounter.enable) { %>
+    <%- partial('partial/catcounter') %>
+  <% } %>
+
   <%- js('js/main') %>
 </body>
 </html>

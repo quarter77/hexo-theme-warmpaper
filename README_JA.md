@@ -31,6 +31,7 @@
 - 霞鶩文楷 GB（LXGW WenKai GB）フォント（CDN からサブセット分割で読み込み）
 - ライトテーマ・ダークテーマに対応。自動切り替えに加え、手動切り替えも可能
 - コメントシステム連携：Waline と Giscus（GitHub Discussions）。どちらも任意で有効化でき、併用も可能
+- アクセスカウンター：セルフホストの CatCounter（Cloudflare Workers）を任意で組み込み可能。デフォルトは無効
 - 数式レンダリング（MathJax v4、任意で有効化）
 
 ## インストール
@@ -197,6 +198,18 @@ waline:
   enable: false
   serverURL: 'https://your-server-url'
 
+# CatCounter アクセスカウンター（https://github.com/finch-xu/CatCounter、Cloudflare Workers でセルフホスト）
+catcounter:
+  enable: false
+  endpoint: 'https://counter.example.com'   # Worker のオリジン（パスなし）
+  token: ''                                  # 管理画面で発行した cc_xxx
+  show_site: true    # フッターにサイト全体の PV / UV を表示
+  show_post: true    # 記事ページのメタ行に「閲覧 N」を表示
+  show_list: true    # 記事一覧の各カードに「閲覧 N」を表示（ページごとに読み取り専用リクエストが 1 回増える。カウントはしない）
+  label_site_pv: '総アクセス'
+  label_site_uv: '訪問者'
+  label_page_pv: '閲覧'
+
 # 記事の抜粋リンクのテキスト
 excerpt_link: Read More
 
@@ -232,18 +245,30 @@ hexo-theme-warmpaper/
 │       ├── toc.ejs          # 目次サイドバー
 │       ├── comment.ejs      # Waline コメントテンプレート
 │       ├── giscus.ejs       # Giscus コメントコンポーネント
+│       ├── catcounter.ejs   # CatCounter アクセスカウンター用スクリプト
 │       └── math.ejs         # MathJax 数式コンポーネント
 └── source/
     ├── css/
     │   ├── style.css        # メインスタイルシート
     │   ├── waline.css       # Waline コメントのスタイル
     │   ├── giscus.css       # Giscus コメントのスタイル
+    │   ├── catcounter.css   # CatCounter アクセスカウンターのスタイル
     │   └── math.css         # 数式のスタイル
     ├── images/
     │   └── logo.svg         # テーマのデフォルトロゴ
     └── js/
         └── main.js          # 目次のスクロール追従
 ```
+
+## アクセスカウンター（CatCounter）
+
+[CatCounter](https://github.com/finch-xu/CatCounter)（Cloudflare Workers でセルフホストするアクセスカウンター。無料プランで動作）を組み込めます。
+
+1. CatCounter の README に従って Worker をデプロイし、管理画面でサイトを作成して token を取得します。
+2. サイトの **Origin 許可リスト**にブログのオリジン（例：`https://blog.example.com`）を追加します。ローカルで `hexo server` を使う場合は `http://localhost:4000` も追加してください。
+3. テーマの `_config.yml` の `catcounter` ブロックに `endpoint` と `token` を記入し、`enable: true` にします。
+
+有効にすると、フッターにサイト全体の PV / UV、記事ページのメタ行に閲覧数、記事一覧の各カードに閲覧数が表示されます。それぞれ `show_site` / `show_post` / `show_list` で個別に切り替えでき、文言は `label_*` で変更できます。スクリプトは `async` で読み込まれ、描画をブロックしません。API に接続できない場合は数字が「-」のままになります。
 
 ## 数式
 

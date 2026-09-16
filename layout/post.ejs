@@ -23,6 +23,10 @@ var tocContent = (theme.toc && theme.toc.enable) ? toc(page.content, {
           <a href="<%- url_for(cat.path) %>"><%= cat.name %></a>
         <% }) %>
       <% } %>
+      <% if (theme.catcounter && theme.catcounter.enable && theme.catcounter.show_post !== false) { %>
+        <span class="separator">&middot;</span>
+        <span class="post-views"><%= theme.catcounter.label_page_pv || '阅读' %> <span data-cc="page_pv">-</span></span>
+      <% } %>
     </div>
   </header>
 
