@@ -73,8 +73,8 @@ giscus:
 # 部署到 Cloudflare Worker 后，在后台新建站点取得 token。
 # 站点的 Origin 白名单须包含博客域名；本地预览再加上 http://localhost:4000
 catcounter:
-  enable: false
-  endpoint: 'https://counter.example.com'   # Worker 域名，不带路径
+  enable: true
+  endpoint: 'https://catcounter.qu43ter7.workers.dev/'   # Worker 域名，不带路径
   token: ''                                  # 形如 cc_xxx
   show_site: true    # 页脚显示「总访问 / 访客」
   show_post: true    # 文章页 meta 行显示「阅读 N」
